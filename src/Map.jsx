@@ -1,9 +1,18 @@
 import { useEffect } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import "./Map.css";
 
-function setupMap(leafletMapRef, mapRef, selectMarker) {
+const unsavedIcon = L.icon({
+  iconUrl: "https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon.png",
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  className: "unsaved-marker",
+});
+
+function setupMap(leafletMapRef, mapRef, selectMarker, marker) {
   if (!mapRef.current) return;
+  console.log(marker);
 
   leafletMapRef.current = L.map(mapRef.current).setView(
     [43.035725, -71.444801],
@@ -11,16 +20,24 @@ function setupMap(leafletMapRef, mapRef, selectMarker) {
   );
 
   function onMapClick(e) {
-    let lat = e.latlng.lat;
-    let lon = e.latlng.lng;
-    var marker = L.marker([lat, lon]);
+    const { lat, lng } = e.latlng;
+    console.log(e);
 
-    console.log(marker);
-    console.log(marker.getLatLng());
-    selectMarker(marker);
+    // If there's an unsaved marker, just move it
+    if (marker && !marker.data) {
+      leafletMapRef.current.removeLayer(marker);
+    }
+    // Create new marker
+    const newMarker = L.marker([lat, lng], { icon: unsavedIcon }).addTo(
+      leafletMapRef.current,
+    );
 
-    marker.on("click", function () {
-      selectMarker(marker);
+    // Select it for editing
+    selectMarker(newMarker);
+
+    // Clicking a marker will select it again for editing
+    newMarker.on("click", () => {
+      selectMarker(newMarker);
     });
   }
 
@@ -37,10 +54,16 @@ function setupMap(leafletMapRef, mapRef, selectMarker) {
   };
 }
 
-export default function Map({ mapRef, selectMarker, width, leafletMapRef }) {
+export default function Map({
+  marker,
+  mapRef,
+  selectMarker,
+  width,
+  leafletMapRef,
+}) {
   useEffect(() => {
     if (!mapRef.current) return;
-    const cleanup = setupMap(leafletMapRef, mapRef, selectMarker);
+    const cleanup = setupMap(leafletMapRef, mapRef, selectMarker, marker);
     return cleanup;
   }, []);
 

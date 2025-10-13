@@ -1,4 +1,10 @@
-export default function Form({ marker, addMarker, selectMarker }) {
+export default function Form({
+  marker,
+  addMarker,
+  selectMarker,
+  deleteMarker,
+  finishAdding,
+}) {
   if (!marker) return <div>Select a marker on the map</div>;
 
   const position = marker.getLatLng(); // <- just use marker directly
@@ -9,7 +15,14 @@ export default function Form({ marker, addMarker, selectMarker }) {
     const description = document.getElementById("description").value;
     marker.data = { name, description };
     addMarker(marker);
-    console.log(marker.data);
+  }
+
+  function finish() {
+    finishAdding();
+  }
+
+  function deleteCurrent() {
+    deleteMarker(marker);
     selectMarker(null);
   }
 
@@ -47,7 +60,11 @@ export default function Form({ marker, addMarker, selectMarker }) {
             </tr>
           </tbody>
         </table>
-        <button onClick={saveMarker}>Save Marker</button>
+        <div>
+          <button onClick={saveMarker}>Save Marker</button>
+          <button onClick={finish}>Finish</button>
+          <button onClick={deleteCurrent}>Delete</button>
+        </div>
       </div>
     </>
   );
