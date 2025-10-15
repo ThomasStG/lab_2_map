@@ -33,3 +33,56 @@
 .read-the-docs {
   color: #888;
 }
+
+.right-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 50vw;
+  height: 100%;
+}
+
+ul li {
+  list-style-type: none;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-content: baseline;
+}
+
+.saved-marker {
+  filter: hue-rotate(90deg);
+}
+
+.hidden {
+  display: none;
+}
+
+.App-container {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+}
+
+Form {
+  align-items: center;
+  align-self: center;
+  justify-content: center;
+}
+
+@media only screen and (max-width: 600px) {
+  Map {
+    width: 100vw;
+  }
+  .App-container {
+    flex-direction: column;
+  }
+
+  .right-panel {
+    width: 100vw;
+  }
+}
+
+.popup-description {
+  white-space: pre-line;
+}

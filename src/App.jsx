@@ -11,7 +11,9 @@ export default function App() {
   let [marker, setMarker] = useState(null);
   const mapRef = useRef(null);
   const leafletMapRef = useRef(null);
+  let [display, setDisplay] = useState("");
 
+  // create a custom marker icon for saved markers (only color changes)
   const savedIcon = L.icon({
     iconUrl: "https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon.png",
     iconSize: [25, 41],
@@ -23,24 +25,34 @@ export default function App() {
     setMarker(marker);
   };
 
+  // function to finish adding markers and update the display
   const finishAdding = () => {
     for (let i = 0; i < markers.length; i++) {
-      if (markers[i].data === null) {
-        alert("You have an unsaved marker");
+      if (markers[i].data == null) {
+        setMarker(markers[i]);
+        console.log(markers[i].getLatLng());
+        alert(
+          "Please fill out all fields before saving." + markers[i].getLatLng(),
+        );
+        return;
       }
     }
+    setDisplay("hidden");
+    setTimeout(() => leafletMapRef.current.invalidateSize(), 100);
   };
 
+  // function to remove a marker from the map
   const deleteMarker = (marker) => {
     leafletMapRef.current.removeLayer(marker);
     setMarkers(markers.filter((m) => m !== marker));
   };
 
+  // function to add a marker to the map
   const addMarker = (marker) => {
     const { lat, lng } = marker.getLatLng();
 
     // Check for a duplicate marker with the same location. Allowing for a 1e-6
-    // difference in latitude and longitude
+    // difference in latitude and longitude for floating point errors
     const existingIndex = markers.findIndex((m) => {
       const pos = m.getLatLng();
       return Math.abs(pos.lat - lat) < 1e-6 && Math.abs(pos.lng - lng) < 1e-6;
@@ -69,42 +81,42 @@ export default function App() {
       updatedMarkers[existingIndex] = existing;
       setMarkers(updatedMarkers);
     } else {
-      // ➕ Add new marker
+      // Set popup to include name and description
       marker.bindPopup(
-        `<h1>${marker.data?.name || "Untitled"}</h1><p>${
-          marker.data?.description || ""
-        }</p>`,
+        `<h1>${marker.data?.name || "Untitled"}</h1>
+          <p style="white-space: pre-line;">${marker.data?.description || ""}</p>`,
       );
       marker.on("click", () => marker.openPopup());
-      marker.setIcon(savedIcon);
+      console.log("Data: ", marker.data);
 
       // Add new marker
       leafletMapRef.current.addLayer(marker);
       setMarkers((prev) => [...prev, marker]);
     }
 
-    // Clear form
-    setMarker(null);
+    // Update marker icon
+    if (marker.data) {
+      marker.setIcon(savedIcon);
+    }
   };
 
   return (
-    <div style={{ display: "flex" }}>
+    <div className="App-container">
       <Map
-        width={50}
         mapRef={mapRef}
         leafletMapRef={leafletMapRef}
         selectMarker={selectMarker}
-        marker={marker}
+        addMarker={addMarker}
       />
-      <div style={{ flexDirection: "column", justifyContent: "space-between" }}>
-        <MarkerList markers={markers} />
+      <div className={`right-panel ${display}`}>
+        <MarkerList markers={markers} selectMarker={selectMarker} />
         <Form
           marker={marker}
           addMarker={addMarker}
           selectMarker={selectMarker}
-          finishAdding={finishAdding}
           deleteMarker={deleteMarker}
         />
+        <button onClick={finishAdding}>Finish</button>
       </div>
     </div>
   );

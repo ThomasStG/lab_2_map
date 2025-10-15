@@ -3,6 +3,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "./Map.css";
 
+// create a custom marker icon for unsaved markers
 const unsavedIcon = L.icon({
   iconUrl: "https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon.png",
   iconSize: [25, 41],
@@ -10,32 +11,26 @@ const unsavedIcon = L.icon({
   className: "unsaved-marker",
 });
 
-function setupMap(leafletMapRef, mapRef, selectMarker, marker) {
+function setupMap(leafletMapRef, mapRef, selectMarker, addMarker) {
   if (!mapRef.current) return;
-  console.log(marker);
 
   leafletMapRef.current = L.map(mapRef.current).setView(
     [43.035725, -71.444801],
     16,
   );
 
+  // Create new marker
   function onMapClick(e) {
     const { lat, lng } = e.latlng;
-    console.log(e);
 
-    // If there's an unsaved marker, just move it
-    if (marker && !marker.data) {
-      leafletMapRef.current.removeLayer(marker);
-    }
-    // Create new marker
     const newMarker = L.marker([lat, lng], { icon: unsavedIcon }).addTo(
       leafletMapRef.current,
     );
 
-    // Select it for editing
+    addMarker(newMarker);
+
     selectMarker(newMarker);
 
-    // Clicking a marker will select it again for editing
     newMarker.on("click", () => {
       selectMarker(newMarker);
     });
@@ -55,15 +50,15 @@ function setupMap(leafletMapRef, mapRef, selectMarker, marker) {
 }
 
 export default function Map({
-  marker,
   mapRef,
   selectMarker,
-  width,
   leafletMapRef,
+  addMarker,
 }) {
+  // Initialize the map after the first render
   useEffect(() => {
     if (!mapRef.current) return;
-    const cleanup = setupMap(leafletMapRef, mapRef, selectMarker, marker);
+    const cleanup = setupMap(leafletMapRef, mapRef, selectMarker, addMarker);
     return cleanup;
   }, []);
 
@@ -73,7 +68,7 @@ export default function Map({
         ref={mapRef}
         style={{
           height: "100vh",
-          width: `${width}vw`,
+          width: `100%`,
         }}
       />
     </>

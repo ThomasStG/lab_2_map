@@ -1,16 +1,24 @@
-# React + Vite
+# Lab 2: React
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+---
 
-Currently, two official plugins are available:
+- Your Name: Thomas Gallaher
+- GitHub Username: ThomasStG
+- Repository URL: [https://github.com/ThomasStG/Lab2-map]
+- Date Submitted: 10/14/2025
+- Collaborators: None
+- Comments: I chose to put a form and the marker list on the side of the page and
+  hide them when the user selects "Finish". Marker colors are determined by
+  whether the user has saved each marker.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Usage: To run the program run:
+  ```bash
+  npm run dev
+  ```
+  in the terminal.
+  Once the page is open, click on the map to add markers. When you are
+  done, click the "Finish" button. Markers can be edited by clicking on
+  them or by clicking on them in the marker list. Markers can be deleted
+  by clicking on them or by clicking on them in the marker list and selecting "Delete".
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
